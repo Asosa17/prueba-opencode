@@ -1,49 +1,35 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import kotlinproject.composeapp.generated.resources.Res
-import kotlinproject.composeapp.generated.resources.compose_multiplatform
+import org.example.project.data.ApiClient
+import org.example.project.data.Database
+import org.example.project.data.Repository
+import org.example.project.ui.home.HomeScreen
+import org.example.project.ui.home.HomeViewModel
+import org.example.project.ui.login.LoginScreen
+import org.example.project.ui.login.LoginViewModel
 
 @Composable
-@Preview
-fun App() {
+fun App(database: Database, serverUrl: String = "http://10.0.2.2:8080") {
+    val apiClient = remember { ApiClient(serverUrl) }
+    val repository = remember { Repository(apiClient, database) }
+
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+        var isLoggedIn by remember { mutableStateOf(false) }
+
+        if (isLoggedIn) {
+            val homeViewModel = remember { HomeViewModel(repository) }
+            HomeScreen(
+                viewModel = homeViewModel,
+                onLogout = { isLoggedIn = false }
+            )
+        } else {
+            val loginViewModel = remember { LoginViewModel(repository) }
+            LoginScreen(
+                viewModel = loginViewModel,
+                onLoginSuccess = { isLoggedIn = true }
+            )
         }
     }
 }

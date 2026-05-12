@@ -15,5 +15,6 @@ fun Application.module() {
     configureStatusPages()
     configureCORS()
     configureCallLogging()
+    configureAuthentication()
     configureRouting()
 }

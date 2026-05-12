@@ -11,7 +11,7 @@ application {
     mainClass.set("org.example.project.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment", "-Djdk.net.hosts.preferredAddressTypes=ipv4")
 }
 
 dependencies {
@@ -24,6 +24,11 @@ dependencies {
     implementation(libs.ktor.serverCors)
     implementation(libs.ktor.serverCallLogging)
     implementation(libs.ktor.serializationKotlinxJson)
+    implementation(libs.ktor.serverAuth)
+    implementation(libs.ktor.serverAuthJwt)
+    implementation(libs.bcrypt)
+    implementation(libs.postgresql)
+    implementation(libs.hikaricp)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 }
